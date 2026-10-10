@@ -493,15 +493,15 @@ export default function TablesPage() {
 
             return (
               <div key={table.id}
-                className={`bg-card rounded-xl border border-border hover:shadow-md transition-shadow ${
-                  hasOrders ? 'border-s-4 border-s-brand' : ''
+                className={`bg-card rounded-xl border border-border/80 hover:border-border hover:shadow-xs transition-all ${
+                  hasOrders ? 'border-s-2 border-s-primary' : ''
                 } ${!table.is_active ? 'opacity-60' : ''}`}>
                 {/* Table header */}
-                <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+                <div className="px-4 py-3 border-b border-border/80 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${statusColors[table.status]}`} />
-                    <h3 className="font-bold text-foreground">{table.name}</h3>
-                    <span className="text-xs text-gray-400">· {tTables('capacitySeats', { count: table.capacity })}</span>
+                    <div className={`w-2.5 h-2.5 rounded-full ${statusColors[table.status]}`} />
+                    <h3 className="font-semibold text-sm text-foreground">{table.name}</h3>
+                    <span className="text-xs text-muted-foreground">· {tTables('capacitySeats', { count: table.capacity })}</span>
                     {locationBadge(table)}
                   </div>
                   <div className="flex items-center gap-2">

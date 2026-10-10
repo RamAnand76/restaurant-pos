@@ -116,8 +116,8 @@ export default function ProductGrid({
         <div data-testid="pos-category-row" className="flex flex-nowrap gap-2 pb-1 overflow-x-auto">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-              !selectedCategory ? 'bg-brand text-white' : 'bg-card text-foreground border border-border hover:bg-muted'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              !selectedCategory ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-card text-muted-foreground border border-border hover:text-foreground hover:bg-muted/60'
             }`}
           >
             {t('allCategories')}
@@ -129,14 +129,12 @@ export default function ProductGrid({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                   isSelected
-                    ? colorClasses
-                      ? `${colorClasses.activeBg} ${colorClasses.activeText}`
-                      : 'bg-brand text-white'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
                     : colorClasses
-                      ? `${colorClasses.bg} ${colorClasses.text} border ${colorClasses.border} hover:opacity-80`
-                      : 'bg-card text-foreground border border-border hover:bg-muted'
+                      ? `${colorClasses.bg} ${colorClasses.text} border ${colorClasses.border} hover:opacity-90`
+                      : 'bg-card text-muted-foreground border border-border hover:text-foreground hover:bg-muted/60'
                 }`}
               >
                 {cat.name}
@@ -164,7 +162,7 @@ export default function ProductGrid({
                 data-testid="pos-product-card"
                 type="button"
                 onClick={() => onProductClick(product)}
-                className="min-h-36 bg-card rounded-xl p-2.5 border border-border hover:border-brand/40 active:border-brand active:bg-muted/40 hover:shadow-md transition-all text-start relative cursor-pointer overflow-hidden touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                className="group min-h-36 bg-card rounded-xl p-3 border border-border/80 hover:border-brand/60 active:scale-[0.98] hover:shadow-sm transition-all text-start relative cursor-pointer overflow-hidden touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
               >
                 {!!product.track_inventory && (
                   <>

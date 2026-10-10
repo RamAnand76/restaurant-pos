@@ -235,13 +235,13 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
                 <button
                   key={type}
                   onClick={() => cart.setOrderType(type)}
-                  className={`touch-target flex-1 gap-1 px-2 rounded-md text-xs font-medium transition-colors ${showIcon ? '' : 'whitespace-nowrap'} ${
+                  className={`touch-target flex-1 gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold tracking-tight transition-all ${showIcon ? '' : 'whitespace-nowrap'} ${
                     cart.orderType === type
-                      ? 'bg-card text-brand shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'bg-card text-foreground shadow-sm border border-border/80'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
-                  {showIcon && <Icon size={14} />}
+                  {showIcon && <Icon size={13} className={cart.orderType === type ? 'text-primary' : 'text-muted-foreground'} />}
                   {label}
                 </button>
               );
@@ -529,7 +529,7 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
           <Button
             onClick={onPlaceOrder}
             disabled={submitting || cart.items.length === 0}
-            className="flex-1"
+            className="flex-1 font-semibold tracking-tight shadow-sm hover:opacity-95 active:scale-[0.99] transition-all bg-primary text-primary-foreground"
             size="lg"
           >
             {submitting ? t('placing') : t('placeOrderButton')}

@@ -677,15 +677,15 @@ export default function DashboardPage() {
               <Link
                 key={tile.label}
                 href={tile.href}
-                className={`group rounded-2xl border p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${tile.color}`}
+                className="group rounded-xl border border-border/80 bg-card p-5 shadow-xs transition-all hover:border-primary/40 hover:shadow-sm"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-sm font-medium text-muted-foreground">{tile.label}</span>
-                  <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tile.iconBg}`}>
-                    <tile.icon size={19} />
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tile.label}</span>
+                  <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${tile.iconBg}`}>
+                    <tile.icon size={16} />
                   </span>
                 </div>
-                <p className="mt-5 text-3xl font-bold tracking-tight text-foreground">
+                <p className="mt-4 text-2xl font-bold tracking-tight text-foreground font-mono">
                   {tile.value}
                 </p>
                 <div className="mt-3 min-h-6">

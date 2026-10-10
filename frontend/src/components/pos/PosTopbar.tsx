@@ -50,13 +50,13 @@ export default function PosTopbar({ tables, products, onTopItemSelect, onShowTab
         {showTableBtn && (
           <button
             onClick={onShowTablePicker}
-            className={`touch-target shrink-0 gap-1.5 px-3 text-sm rounded-lg border font-medium transition-colors whitespace-nowrap ${
+            className={`touch-target shrink-0 gap-1.5 px-3 py-1 text-xs rounded-md border font-semibold transition-all whitespace-nowrap ${
               cart.tableId
-                ? 'bg-orange-500 text-white border-orange-500 hover:bg-orange-600'
-                : 'bg-amber-50 border-amber-400 text-amber-700 hover:bg-amber-100'
+                ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                : 'bg-card border-border text-foreground hover:bg-muted/70'
             }`}
           >
-            <LayoutGrid size={14} />
+            <LayoutGrid size={13} className={cart.tableId ? 'text-primary-foreground' : 'text-muted-foreground'} />
             {cart.tableId
               ? t('tableLabel', { name: tables.find(t => t.id === cart.tableId)?.name || cart.tableId })
               : t('selectTable')}
@@ -66,11 +66,11 @@ export default function PosTopbar({ tables, products, onTopItemSelect, onShowTab
         <button
           type="button"
           onClick={onShowCashMovement}
-          className="touch-target shrink-0 gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted active:bg-muted whitespace-nowrap"
+          className="touch-target shrink-0 gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-all hover:text-foreground hover:bg-muted/70 whitespace-nowrap"
           title={tDashboard('cashMovement')}
           aria-label={tDashboard('cashMovement')}
         >
-          <Banknote size={16} />
+          <Banknote size={14} />
           <span className="hidden sm:inline">{tDashboard('cashMovement')}</span>
         </button>
 

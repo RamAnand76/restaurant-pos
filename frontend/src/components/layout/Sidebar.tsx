@@ -23,6 +23,8 @@ import {
   Monitor,
   Boxes,
   Receipt,
+  PanelLeftClose,
+  PanelLeft,
   type LucideIcon,
 } from 'lucide-react';
 import { useTranslations, type AppConfig } from 'use-intl';
@@ -87,7 +89,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { user, currentTenant, logout } = useAuthStore();
   const { tablesRequired, kdsEnabled, whatsappEnabled, setTablesRequired, setKdsEnabled, setWhatsappEnabled } = usePosSettingsStore();
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { isMobile, setOpenMobile, toggleSidebar, open } = useSidebar();
   const t = useTranslations('nav');
   const tCommon = useTranslations('common');
   const { confirm, ConfirmDialog } = useConfirm();
@@ -176,21 +178,39 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href={homeHref}>
-                <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-semibold">
-                  {(currentTenant?.business_name || tCommon('brandName')).charAt(0).toUpperCase()}
-                </div>
-                <div className="flex flex-col gap-0.5 min-w-0 leading-none">
-                  <span className="font-semibold truncate">{currentTenant?.business_name || tCommon('brandName')}</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="border-b border-sidebar-border/60 pb-2">
+        <div className="flex items-center justify-between gap-2 px-1">
+          <Link href={homeHref} className="flex items-center gap-2.5 min-w-0 group-data-[collapsible=icon]:justify-center">
+            <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold shadow-xs">
+              {(currentTenant?.business_name || tCommon('brandName')).charAt(0).toUpperCase()}
+            </div>
+            <div className="flex flex-col gap-0.5 min-w-0 leading-none group-data-[collapsible=icon]:hidden">
+              <span className="font-semibold text-sm truncate text-foreground">{currentTenant?.business_name || tCommon('brandName')}</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono">Flo POS</span>
+            </div>
+          </Link>
+          {open ? (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              title="Collapse Sidebar"
+              aria-label="Collapse Sidebar"
+              className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors group-data-[collapsible=icon]:hidden cursor-pointer"
+            >
+              <PanelLeftClose className="size-4 shrink-0" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              title="Expand Sidebar"
+              aria-label="Expand Sidebar"
+              className="hidden size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors group-data-[collapsible=icon]:flex cursor-pointer mt-1"
+            >
+              <PanelLeft className="size-4 shrink-0" />
+            </button>
+          )}
+        </div>
       </SidebarHeader>
 
       <SidebarContent>

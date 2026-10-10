@@ -26,10 +26,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex min-h-0 flex-1 w-full overflow-hidden">
           <AppSidebar />
           <SidebarInset className="h-full min-h-0 overflow-hidden flex flex-col">
-            {/* Mobile-only app bar: below md the sidebar renders as a Sheet with
-                no opener, so expose the trigger here (Refs #241). */}
-            <div className="md:hidden flex items-center px-2 py-1.5 border-b border-border bg-card shrink-0">
-              <SidebarTrigger className="size-8" aria-label="Open navigation" />
+            {/* Consistent top header with permanent collapse trigger */}
+            <div className="flex items-center justify-between px-4 py-2 border-b border-border/80 bg-card/60 backdrop-blur-md shrink-0">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="size-8 text-muted-foreground hover:text-foreground cursor-pointer" aria-label="Toggle navigation" />
+                <span className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase font-mono">FloPOS Terminal</span>
+              </div>
             </div>
             {!isPos && <GlobalNotifications />}
             <div className={isPos
