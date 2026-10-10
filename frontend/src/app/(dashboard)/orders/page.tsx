@@ -1112,7 +1112,7 @@ export default function OrdersPage() {
               onClick={() => setTabFilter(f)}
               className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                 tabFilter === f
-                  ? 'bg-card text-foreground shadow-2xs border border-border/60'
+                  ? 'bg-primary text-primary-foreground shadow-xs font-bold'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
