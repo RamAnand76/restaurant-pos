@@ -437,7 +437,8 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
       </div>
 
       {/* Cart Footer */}
-      <div data-testid="cart-footer" className="p-4 border-t border-border dark:border-border">
+      {/* Cart Footer */}
+      <div data-testid="cart-footer" className="p-4 border-t border-border/80 bg-card/60 backdrop-blur-sm">
         {/* Order Notes */}
         {cart.items.length > 0 && (
           <div className="mb-3">
@@ -447,89 +448,104 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
               placeholder={t('orderNotesPlaceholder')}
               rows={2}
               maxLength={200}
-              className="w-full min-h-20 px-3 py-2 text-sm border border-border bg-card rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand"
+              className="w-full min-h-16 px-3 py-2 text-xs border border-border bg-card rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand"
             />
-            <p className="text-xs text-muted-foreground text-end mt-0.5">{cart.orderNotes.length}/200</p>
+            <p className="text-[11px] text-muted-foreground text-end mt-0.5 font-mono">{cart.orderNotes.length}/200</p>
           </div>
         )}
-        <div className="flex justify-between mb-1 text-sm">
-          <span className="text-muted-foreground">{t('items')}</span>
-          <span className="font-medium">{cart.itemCount()}</span>
-        </div>
-        <div className="flex justify-between mb-4 text-lg">
-          <span className="font-semibold text-foreground">{t('subtotal')}</span>
-          <span className="font-bold text-brand">
-            {fmt(cart.subtotal())}
-          </span>
-        </div>
-        {(appliedCharges.length > 0 || addableCharges.length > 0) && (
-          <div className="mb-4 space-y-1" data-testid="cart-charges">
-            {appliedCharges.map((charge) => {
-              const definition = applicableCharges.find((c) => c.id === charge.id);
-              const isOptional = definition?.is_optional ?? false;
-              return (
-                <div key={charge.id} className="flex items-center justify-between gap-2 text-sm">
-                  <span className={charge.waived ? 'text-muted-foreground line-through' : 'text-muted-foreground'}>
-                    {charge.name}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <span className={charge.waived ? 'text-muted-foreground line-through' : 'font-medium'}>
-                      {fmt(charge.amount)}
+
+        {/* Bill Hierarchy & Stripe Breakdown */}
+        <div className="space-y-2 mb-3.5">
+          <div className="flex justify-between items-center text-xs">
+            <span className="text-muted-foreground font-medium uppercase tracking-wider text-[11px]">{t('items')}</span>
+            <span className="font-semibold text-foreground tabular-nums font-mono">{cart.itemCount()}</span>
+          </div>
+
+          <div className="flex justify-between items-baseline text-sm">
+            <span className="font-medium text-foreground">{t('subtotal')}</span>
+            <span className="font-semibold text-foreground tabular-nums font-mono">
+              {fmt(cart.subtotal())}
+            </span>
+          </div>
+
+          {(appliedCharges.length > 0 || addableCharges.length > 0) && (
+            <div className="rounded-lg border border-border/60 bg-muted/20 p-2.5 space-y-1.5 my-2" data-testid="cart-charges">
+              {appliedCharges.map((charge) => {
+                const definition = applicableCharges.find((c) => c.id === charge.id);
+                const isOptional = definition?.is_optional ?? false;
+                return (
+                  <div key={charge.id} className="flex items-center justify-between gap-2 text-xs">
+                    <span className={charge.waived ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground'}>
+                      {charge.name}
                     </span>
-                    {isOptional && (
-                      <button
-                        type="button"
-                        onClick={() => cart.toggleWaiveCharge(charge.id)}
-                        aria-pressed={charge.waived}
-                        className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground hover:text-foreground"
-                      >
-                        {charge.waived ? t('applyCharge') : t('waiveCharge')}
-                      </button>
-                    )}
-                    {!definition?.is_default_active && (
-                      <button
-                        type="button"
-                        onClick={() => cart.toggleOptedInCharge(charge.id)}
-                        aria-pressed={!cart.optedInChargeIds.has(charge.id)}
-                        className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground hover:text-foreground"
-                      >
-                        {cart.optedInChargeIds.has(charge.id) ? t('removeCharge') : t('addCharge')}
-                      </button>
-                    )}
-                  </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={charge.waived ? 'text-muted-foreground/60 line-through tabular-nums font-mono' : 'font-medium text-foreground tabular-nums font-mono'}>
+                        {fmt(charge.amount)}
+                      </span>
+                      {isOptional && (
+                        <button
+                          type="button"
+                          onClick={() => cart.toggleWaiveCharge(charge.id)}
+                          aria-pressed={charge.waived}
+                          className="text-[10px] px-2 py-0.5 rounded-full border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
+                        >
+                          {charge.waived ? t('applyCharge') : t('waiveCharge')}
+                        </button>
+                      )}
+                      {!definition?.is_default_active && (
+                        <button
+                          type="button"
+                          onClick={() => cart.toggleOptedInCharge(charge.id)}
+                          aria-pressed={!cart.optedInChargeIds.has(charge.id)}
+                          className="text-[10px] px-2 py-0.5 rounded-full border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
+                        >
+                          {cart.optedInChargeIds.has(charge.id) ? t('removeCharge') : t('addCharge')}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              {addableCharges.map((charge) => (
+                <div key={charge.id} className="flex items-center justify-between gap-2 text-xs">
+                  <span className="text-muted-foreground">{charge.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => cart.toggleOptedInCharge(charge.id)}
+                    className="text-[10px] px-2 py-0.5 rounded-full border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
+                  >
+                    {t('addCharge')}
+                  </button>
                 </div>
-              );
-            })}
-            {addableCharges.map((charge) => (
-              <div key={charge.id} className="flex items-center justify-between gap-2 text-sm">
-                <span className="text-muted-foreground">{charge.name}</span>
-                <button
-                  type="button"
-                  onClick={() => cart.toggleOptedInCharge(charge.id)}
-                  className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground hover:text-foreground"
-                >
-                  {t('addCharge')}
-                </button>
-              </div>
-            ))}
-            {appliedCharges.length > 0 && (
-              <div className="flex justify-between text-sm font-medium">
-                <span>{t('chargesTotal')}</span>
-                <span>{fmt(chargeTotal)}</span>
-              </div>
-            )}
+              ))}
+              {appliedCharges.length > 0 && (
+                <div className="flex justify-between items-center pt-1.5 border-t border-border/50 text-xs font-medium">
+                  <span className="text-muted-foreground">{t('chargesTotal')}</span>
+                  <span className="tabular-nums font-mono text-foreground">{fmt(chargeTotal)}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Grand Total Row */}
+          <div className="flex justify-between items-baseline pt-2 border-t border-border/80">
+            <span className="text-sm font-semibold tracking-tight text-foreground uppercase">{t('total') || 'Total'}</span>
+            <span className="text-xl font-bold tracking-tight text-brand tabular-nums font-mono">
+              {fmt(cart.subtotal() + chargeTotal)}
+            </span>
           </div>
-        )}
+        </div>
+
         <div className="flex gap-2">
           {canHold && (
-            <Button variant="outline" onClick={handleHold} className="flex-1">
+            <Button variant="outline" onClick={handleHold} className="flex-1 rounded-xl">
               <Pause size={14} className="me-1" /> {t('holdButton')}
             </Button>
           )}
           <Button
             onClick={onPlaceOrder}
             disabled={submitting || cart.items.length === 0}
-            className="flex-1 font-semibold tracking-tight shadow-sm hover:opacity-95 active:scale-[0.99] transition-all bg-primary text-primary-foreground"
+            className="flex-1 font-semibold tracking-tight shadow-sm hover:opacity-95 active:scale-[0.99] transition-all bg-primary text-primary-foreground rounded-xl"
             size="lg"
           >
             {submitting ? t('placing') : t('placeOrderButton')}

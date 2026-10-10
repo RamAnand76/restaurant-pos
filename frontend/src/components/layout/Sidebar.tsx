@@ -23,8 +23,6 @@ import {
   Monitor,
   Boxes,
   Receipt,
-  PanelLeftClose,
-  PanelLeft,
   type LucideIcon,
 } from 'lucide-react';
 import { useTranslations, type AppConfig } from 'use-intl';
@@ -89,7 +87,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { user, currentTenant, logout } = useAuthStore();
   const { tablesRequired, kdsEnabled, whatsappEnabled, setTablesRequired, setKdsEnabled, setWhatsappEnabled } = usePosSettingsStore();
-  const { isMobile, setOpenMobile, toggleSidebar, open } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   const t = useTranslations('nav');
   const tCommon = useTranslations('common');
   const { confirm, ConfirmDialog } = useConfirm();

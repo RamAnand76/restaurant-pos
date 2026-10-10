@@ -15,6 +15,8 @@ backups/
 .DS_Store
 .claude/
 .agents/
+.agent/
+.design/
 docs/superpowers/
 .superpowers
 .gstack
