@@ -1,4 +1,4 @@
-import { getCountryCallingCode, type CountryCode } from 'libphonenumber-js';
+import { getCountryCallingCode, type CountryCode } from 'libphonenumber-js/min';
 import { isSyntacticallyValidCurrencyCode } from '../shared/print/currency';
 
 export interface TaxIdFormat {
