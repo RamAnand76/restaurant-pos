@@ -395,13 +395,13 @@ export default function DashboardPage() {
         ? t('kpiNewVsSameDayLastWeek')
         : t('kpiChangeVsSameDayLastWeek', { percent: `${direction === 'down' ? '-' : direction === 'up' ? '+' : ''}${percent}` });
     const tone = direction === 'up'
-      ? 'bg-emerald-100/80 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
       : direction === 'down'
-        ? 'bg-red-100/80 text-red-700 dark:bg-red-950/50 dark:text-red-300'
-        : 'bg-muted text-muted-foreground';
+        ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+        : 'bg-muted text-muted-foreground border border-border/60';
     return (
-      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ${tone}`}>
-        <Icon size={13} />
+      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-tight ${tone}`}>
+        <Icon size={12} />
         {label}
       </span>
     );
@@ -553,18 +553,18 @@ export default function DashboardPage() {
     : [];
 
   return (
-    <div className="min-h-full bg-background p-4 sm:p-6 lg:p-7">
-      <div className="mb-7 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div className="min-h-full bg-background flex flex-col">
+      <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {t('title')}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {periodMode === 'month' ? t('selectMonth') : t('selectDate')}
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-start gap-2 xl:justify-end">
+        <div className="flex flex-wrap items-center justify-start gap-2.5 xl:justify-end">
           {periodMode === 'day' ? (
             <div className="relative">
               <input
@@ -573,16 +573,16 @@ export default function DashboardPage() {
                 value={selectedDate}
                 max={todayLocal}
                 onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-                className="h-10 appearance-none rounded-xl border border-border bg-card ps-3 pe-10 text-sm text-foreground shadow-sm [color-scheme:light] focus:outline-none focus:ring-2 focus:ring-brand/30 dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:opacity-0"
+                className="h-9 appearance-none rounded-lg border border-border/80 bg-card ps-3 pe-9 text-xs font-medium text-foreground shadow-xs [color-scheme:light] focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:opacity-0 font-mono"
                 aria-label={t('selectDate')}
               />
               <button
                 type="button"
                 onClick={() => openPicker(dayInputRef.current)}
-                className="absolute inset-y-0 end-0 z-10 flex w-9 items-center justify-center rounded-e-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="absolute inset-y-0 end-0 z-10 flex w-8 items-center justify-center rounded-e-lg text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                 aria-label={t('openDatePicker')}
               >
-                <CalendarDays size={16} />
+                <CalendarDays size={14} />
               </button>
             </div>
           ) : (
@@ -593,27 +593,32 @@ export default function DashboardPage() {
                 value={selectedMonth}
                 max={todayLocal.slice(0, 7)}
                 onChange={(e) => e.target.value && setSelectedMonth(e.target.value)}
-                className="h-10 appearance-none rounded-xl border border-border bg-card ps-3 pe-10 text-sm text-foreground shadow-sm [color-scheme:light] focus:outline-none focus:ring-2 focus:ring-brand/30 dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:opacity-0"
+                className="h-9 appearance-none rounded-lg border border-border/80 bg-card ps-3 pe-9 text-xs font-medium text-foreground shadow-xs [color-scheme:light] focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:opacity-0 font-mono"
                 aria-label={t('selectMonth')}
               />
               <button
                 type="button"
                 onClick={() => openPicker(monthInputRef.current)}
-                className="absolute inset-y-0 end-0 z-10 flex w-9 items-center justify-center rounded-e-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="absolute inset-y-0 end-0 z-10 flex w-8 items-center justify-center rounded-e-lg text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                 aria-label={t('openMonthPicker')}
               >
-                <CalendarDays size={16} />
+                <CalendarDays size={14} />
               </button>
             </div>
           )}
 
-          <div className="flex h-10 rounded-xl border border-border bg-card p-1 shadow-sm" role="group" aria-label={t('periodView')}>
+          {/* Stripe-style segmented pill toggle */}
+          <div className="flex h-9 rounded-full border border-border/80 bg-muted/50 p-0.5 shadow-2xs" role="group" aria-label={t('periodView')}>
             {(['day', 'month'] as const).map((mode) => (
               <button
                 key={mode}
                 type="button"
                 onClick={() => setPeriodMode(mode)}
-                className={`min-w-16 rounded-lg px-3 text-sm font-medium transition-colors ${periodMode === mode ? 'bg-foreground text-background shadow-sm' : 'text-muted-foreground hover:bg-muted'}`}
+                className={`min-w-14 rounded-full px-3 text-xs font-semibold tracking-tight transition-all cursor-pointer ${
+                  periodMode === mode
+                    ? 'bg-card text-foreground shadow-xs border border-border/60'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
                 aria-pressed={periodMode === mode}
               >
                 {t(mode)}
@@ -621,14 +626,15 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          <span className="mx-1 hidden h-7 w-px bg-border xl:block" aria-hidden="true" />
+          <span className="mx-1 hidden h-5 w-px bg-border xl:block" aria-hidden="true" />
 
+          {/* Stripe pill CTAs */}
           <Button
             type="button"
             onClick={() => cashClose.openCloseModal()}
-            className="h-10 rounded-xl bg-brand px-4 text-white shadow-sm hover:bg-brand-hover"
+            className="h-9 rounded-full px-4 text-xs font-semibold tracking-tight shadow-sm cursor-pointer"
           >
-            <Lock size={14} />
+            <Lock size={13} className="me-0.5" />
             {t('closeShift')}
           </Button>
           {periodMode === 'day' && (
@@ -638,21 +644,21 @@ export default function DashboardPage() {
                   type="button"
                   variant="outline"
                   disabled={isExporting}
-                  className="h-10 rounded-xl bg-card px-4 shadow-sm"
+                  className="h-9 rounded-full px-3.5 text-xs font-semibold tracking-tight bg-card border-border/80 shadow-2xs cursor-pointer hover:bg-muted/60"
                   title={t('exportSales')}
                 >
-                  <Download size={14} />
+                  <Download size={13} className="me-1" />
                   {t('exportSales')}
-                  <ChevronDown size={14} />
+                  <ChevronDown size={13} className="ms-1 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onSelect={() => exportDailySales('xlsx')}>
-                  <FileSpreadsheet size={14} />
+              <DropdownMenuContent align="end" className="w-48 rounded-xl border-border/80 shadow-md">
+                <DropdownMenuItem onSelect={() => exportDailySales('xlsx')} className="text-xs font-medium cursor-pointer">
+                  <FileSpreadsheet size={14} className="me-2 text-emerald-500" />
                   {t('exportXlsx')}
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => exportDailySales('csv')}>
-                  <FileText size={14} />
+                <DropdownMenuItem onSelect={() => exportDailySales('csv')} className="text-xs font-medium cursor-pointer">
+                  <FileText size={14} className="me-2 text-blue-500" />
                   {t('exportCsv')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -672,40 +678,47 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
+          {/* Stripe Financial Metric Cards */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {primaryTiles.map((tile) => (
               <Link
                 key={tile.label}
                 href={tile.href}
-                className="group rounded-xl border border-border/80 bg-card p-5 shadow-xs transition-all hover:border-primary/40 hover:shadow-sm"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/70 bg-card p-5 shadow-xs transition-all hover:border-primary/50 hover:shadow-sm"
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center justify-between gap-3">
                   <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tile.label}</span>
-                  <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${tile.iconBg}`}>
-                    <tile.icon size={16} />
+                  <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg shadow-2xs ${tile.iconBg}`}>
+                    <tile.icon size={15} />
                   </span>
                 </div>
-                <p className="mt-4 text-2xl font-bold tracking-tight text-foreground font-mono">
-                  {tile.value}
-                </p>
-                <div className="mt-3 min-h-6">
-                  {tile.comparison || (tile.meta && <span className="text-xs font-medium text-muted-foreground">{tile.meta}</span>)}
+                <div className="mt-4">
+                  <p className="text-2xl font-bold tracking-tight text-foreground font-mono">
+                    {tile.value}
+                  </p>
+                  <div className="mt-2.5 flex items-center min-h-5">
+                    {tile.comparison || (tile.meta && (
+                      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
+                        {tile.meta}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
 
           {secondaryMetrics.length > 0 && (
-            <div className="mt-5 grid grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card shadow-sm sm:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 overflow-hidden rounded-xl border border-border/70 bg-card shadow-xs sm:grid-cols-3">
               {secondaryMetrics.map((metric, index) => (
-                <div key={metric.label} className={`flex items-center gap-3 p-4 sm:p-5 ${index > 0 ? 'border-t border-border sm:border-s-0 sm:border-t-0 sm:border-s' : ''}`}>
-                  <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${metric.iconBg}`}>
-                    <metric.icon size={18} />
+                <div key={metric.label} className={`flex items-center gap-3.5 p-4 sm:p-4.5 ${index > 0 ? 'border-t border-border/70 sm:border-s sm:border-t-0' : ''}`}>
+                  <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg shadow-2xs ${metric.iconBg}`}>
+                    <metric.icon size={16} />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium text-muted-foreground">{metric.label}</p>
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <p className="text-lg font-semibold text-foreground">{metric.value}</p>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{metric.label}</p>
+                    <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                      <p className="text-base font-bold text-foreground font-mono">{metric.value}</p>
                       {metric.comparison}
                     </div>
                   </div>
