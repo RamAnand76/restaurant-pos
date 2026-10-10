@@ -49,18 +49,18 @@ type OrdersKey = keyof AppConfig['Messages']['orders'];
 type WhatsAppStatusKey = keyof AppConfig['Messages']['whatsapp']['status'];
 
 export const orderStatusBadge: Record<Order['status'], { bg: string; text: string; labelKey: OrdersKey }> = {
-  pending: { bg: 'bg-yellow-100 dark:bg-yellow-950/40', text: 'text-yellow-700 dark:text-yellow-300', labelKey: 'pending' },
-  preparing: { bg: 'bg-blue-100 dark:bg-blue-950/40', text: 'text-blue-700 dark:text-blue-300', labelKey: 'preparing' },
-  ready: { bg: 'bg-green-100 dark:bg-green-950/40', text: 'text-green-700 dark:text-green-300', labelKey: 'ready' },
-  served: { bg: 'bg-purple-100 dark:bg-purple-950/40', text: 'text-purple-700 dark:text-purple-300', labelKey: 'served' },
-  completed: { bg: 'bg-muted', text: 'text-muted-foreground', labelKey: 'completed' },
-  cancelled: { bg: 'bg-red-100 dark:bg-red-950/40', text: 'text-red-700 dark:text-red-300', labelKey: 'cancelled' },
+  pending: { bg: 'bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/40', text: 'text-amber-700 dark:text-amber-300', labelKey: 'pending' },
+  preparing: { bg: 'bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/40', text: 'text-blue-700 dark:text-blue-300', labelKey: 'preparing' },
+  ready: { bg: 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/40', text: 'text-emerald-700 dark:text-emerald-300', labelKey: 'ready' },
+  served: { bg: 'bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/40', text: 'text-purple-700 dark:text-purple-300', labelKey: 'served' },
+  completed: { bg: 'bg-muted/60 border border-border/80', text: 'text-muted-foreground', labelKey: 'completed' },
+  cancelled: { bg: 'bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-800/40', text: 'text-rose-700 dark:text-rose-300', labelKey: 'cancelled' },
 };
 
 export const paymentStatusBadge: Record<'paid' | 'partial' | 'unpaid', { bg: string; text: string; labelKey: OrdersKey }> = {
-  paid: { bg: 'bg-green-100 dark:bg-green-950/40', text: 'text-green-700 dark:text-green-300', labelKey: 'paid' },
-  partial: { bg: 'bg-amber-100 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-300', labelKey: 'partiallyPaid' },
-  unpaid: { bg: 'bg-red-100 dark:bg-red-950/40', text: 'text-red-700 dark:text-red-300', labelKey: 'unpaidBadge' },
+  paid: { bg: 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/40', text: 'text-emerald-700 dark:text-emerald-300', labelKey: 'paid' },
+  partial: { bg: 'bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/40', text: 'text-amber-700 dark:text-amber-300', labelKey: 'partiallyPaid' },
+  unpaid: { bg: 'bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-800/40', text: 'text-rose-700 dark:text-rose-300', labelKey: 'unpaidBadge' },
 };
 
 export const whatsappReceiptStatusBadge: Record<'sent' | 'partial' | 'pending' | 'failed' | 'notSent', { bg: string; text: string; labelKey: WhatsAppStatusKey }> = {

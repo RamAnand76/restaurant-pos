@@ -1103,17 +1103,17 @@ export default function OrdersPage() {
   return (
     <div className="h-full min-h-0 flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <h1 className="text-2xl font-bold text-foreground">{tNav('orders')}</h1>
-        <div className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-2 shrink-0">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{tNav('orders')}</h1>
+        <div className="flex items-center gap-1 rounded-full bg-muted/60 p-1 border border-border/80">
           {(['all', 'active', 'unpaid', 'held'] as FilterType[]).map((f) => (
             <button
               key={f}
               onClick={() => setTabFilter(f)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium ${
+              className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                 tabFilter === f
-                  ? 'bg-brand text-white'
-                  : 'bg-card text-muted-foreground border border-border hover:border-gray-400'
+                  ? 'bg-card text-foreground shadow-2xs border border-border/60'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {tOrders(tabLabelKey[f])}
