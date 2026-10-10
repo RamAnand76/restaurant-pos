@@ -2,10 +2,8 @@
 
 import { PointerActivationConstraints, PointerSensor } from '@dnd-kit/dom';
 import { DragDropProvider, useDraggable, type DragEndEvent } from '@dnd-kit/react';
-import { Clock } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
-import { ElapsedTime } from '@/components/kds/ElapsedTime';
+import { ElapsedBadge } from '@/components/kds/ElapsedTime';
 import { KdsColumn } from '@/components/kds/KdsColumn';
 import { KdsItemModal } from '@/components/kds/KdsItemModal';
 import { Badge } from '@/components/ui/badge';
@@ -226,9 +224,8 @@ function KanbanOrderCard({
               <Badge variant="secondary">{t('tableLabel', { name: order.table.name })}</Badge>
             )}
           </div>
-          <div className="flex items-center gap-1 text-sm text-gray-400 font-mono shrink-0">
-            <Clock size={12} />
-            <Ltr><ElapsedTime dateStr={order.created_at} /></Ltr>
+          <div className="flex items-center shrink-0">
+            <Ltr><ElapsedBadge dateStr={order.created_at} /></Ltr>
           </div>
         </div>
 

@@ -17,12 +17,37 @@ import { Ltr } from '@/components/layout/Ltr';
 import { ORDER_STATUS_LABEL_KEYS, ITEM_STATUS_LABEL_KEYS, TABLE_STATUS_LABEL_KEYS } from '@/lib/i18n-enums';
 import { TableTurnoverBadge } from '@/components/tables/TableTurnoverBadge';
 
-const statusColors: Record<string, string> = {
-  available: 'bg-green-500',
-  occupied: 'bg-red-500',
-  reserved: 'bg-yellow-500',
-  cleaning: 'bg-gray-500',
-  held: 'bg-blue-500',
+const tableStatusStyles: Record<string, { dot: string; badge: string; cardBorder: string; cardBg: string }> = {
+  available: {
+    dot: 'bg-emerald-500',
+    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40',
+    cardBorder: 'hover:border-emerald-500/50',
+    cardBg: 'hover:bg-emerald-500/[0.02]',
+  },
+  occupied: {
+    dot: 'bg-rose-500',
+    badge: 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/40',
+    cardBorder: 'border-rose-500/30 hover:border-rose-500/60',
+    cardBg: 'bg-rose-500/[0.02]',
+  },
+  reserved: {
+    dot: 'bg-amber-500',
+    badge: 'bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40',
+    cardBorder: 'border-amber-500/30 hover:border-amber-500/60',
+    cardBg: 'bg-amber-500/[0.02]',
+  },
+  cleaning: {
+    dot: 'bg-neutral-400',
+    badge: 'bg-neutral-100 text-neutral-700 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700',
+    cardBorder: 'hover:border-neutral-400/50',
+    cardBg: '',
+  },
+  held: {
+    dot: 'bg-blue-500',
+    badge: 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/40',
+    cardBorder: 'border-blue-500/30 hover:border-blue-500/60',
+    cardBg: '',
+  },
 };
 
 type OrdersKey = keyof AppConfig['Messages']['orders'];
@@ -490,25 +515,28 @@ export default function TablesPage() {
           {visibleTables.map((table) => {
             const tableOrders = ordersByTable.get(table.id) || [];
             const hasOrders = tableOrders.length > 0;
+            const style = tableStatusStyles[table.status] || tableStatusStyles.cleaning;
 
             return (
               <div key={table.id}
-                className={`bg-card rounded-xl border border-border/80 hover:border-border hover:shadow-xs transition-all ${
-                  hasOrders ? 'border-s-2 border-s-primary' : ''
+                className={`bg-card rounded-xl border border-border/80 transition-all ${style.cardBorder} ${style.cardBg} hover:shadow-xs ${
+                  hasOrders ? 'border-s-4 border-s-primary' : ''
                 } ${!table.is_active ? 'opacity-60' : ''}`}>
                 {/* Table header */}
                 <div className="px-4 py-3 border-b border-border/80 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full ${statusColors[table.status]}`} />
-                    <h3 className="font-semibold text-sm text-foreground">{table.name}</h3>
-                    <span className="text-xs text-muted-foreground">· {tTables('capacitySeats', { count: table.capacity })}</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-xs font-semibold tracking-tight ${style.badge}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                      {tTables(TABLE_STATUS_LABEL_KEYS[table.status])}
+                    </span>
+                    <h3 className="font-bold text-sm text-foreground">{table.name}</h3>
+                    <span className="text-xs text-muted-foreground font-mono">· {tTables('capacitySeats', { count: table.capacity })}</span>
                     {locationBadge(table)}
                   </div>
                   <div className="flex items-center gap-2">
                     {table.status === 'occupied' && table.seated_at && (
                       <TableTurnoverBadge seatedAt={table.seated_at} />
                     )}
-                    <span className="text-xs text-gray-400">{tTables(TABLE_STATUS_LABEL_KEYS[table.status])}</span>
                   </div>
                 </div>
 
@@ -593,17 +621,23 @@ export default function TablesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {visibleTables.map((table) => (
-            <div key={table.id}
-              className={`bg-card rounded-xl p-5 border border-border text-center hover:shadow-md transition-shadow ${!table.is_active ? 'opacity-60' : ''}`}>
-              <div className={`w-3 h-3 rounded-full ${statusColors[table.status]} mx-auto mb-3`} />
-              <h3 className="font-bold text-lg text-foreground">{table.name}</h3>
-              <p className="text-sm text-muted-foreground">{tTables('capacitySeats', { count: table.capacity })}</p>
-              <p className="text-xs text-gray-400 mt-1">{tTables(TABLE_STATUS_LABEL_KEYS[table.status])}</p>
-              {table.status === 'occupied' && table.seated_at && (
-                <div className="mt-1"><TableTurnoverBadge seatedAt={table.seated_at} /></div>
-              )}
-              <div className="mt-2 flex justify-center">{locationBadge(table)}</div>
+          {visibleTables.map((table) => {
+            const style = tableStatusStyles[table.status] || tableStatusStyles.cleaning;
+            return (
+              <div key={table.id}
+                className={`bg-card rounded-xl p-5 border border-border/80 text-center transition-all ${style.cardBorder} ${style.cardBg} hover:shadow-md ${!table.is_active ? 'opacity-60' : ''}`}>
+                <div className="flex justify-center mb-2.5">
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-semibold tracking-tight ${style.badge}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                    {tTables(TABLE_STATUS_LABEL_KEYS[table.status])}
+                  </span>
+                </div>
+                <h3 className="font-bold text-lg text-foreground">{table.name}</h3>
+                <p className="text-xs text-muted-foreground font-mono mt-0.5">{tTables('capacitySeats', { count: table.capacity })}</p>
+                {table.status === 'occupied' && table.seated_at && (
+                  <div className="mt-1.5"><TableTurnoverBadge seatedAt={table.seated_at} /></div>
+                )}
+                <div className="mt-2 flex justify-center">{locationBadge(table)}</div>
               {table.status === 'reserved' && table.reservation_customer_name && (
                 <p className="text-xs text-yellow-700 font-medium mt-1 truncate">{table.reservation_customer_name}</p>
               )}
@@ -628,14 +662,15 @@ export default function TablesPage() {
                   <button onClick={() => openEdit(table)} className="mt-2 mx-auto text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1">
                     <Pencil size={12} /> {tTables('editTable')}
                   </button>
-                  <button onClick={() => toggleActive(table)}
+                    <button onClick={() => toggleActive(table)}
                     className={`mt-2 block mx-auto text-xs font-medium ${!table.is_active ? 'text-green-600 hover:text-green-700' : 'text-red-500 hover:text-red-700'}`}>
                     {!table.is_active ? tTables('reactivate') : tTables('deactivate')}
                   </button>
                 </>
               )}
             </div>
-          ))}
+          );
+        })}
         </div>
       )) : null}
 

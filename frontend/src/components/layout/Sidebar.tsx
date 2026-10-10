@@ -77,7 +77,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { href: '/inventory', labelKey: 'inventory', icon: Boxes, permission: 'inventory.view', businessTypes: null },
   { href: '/expenses', labelKey: 'expenses', icon: Receipt, permission: 'expenses.view', businessTypes: null },
   { href: '/tables', labelKey: 'tables', icon: Grid3X3, permission: 'tables.view', businessTypes: ['restaurant'] },
-  { href: '/settings?tab=kds', labelKey: 'kds', icon: ChefHat, permission: 'kitchen.stations.manage', businessTypes: ['restaurant'] },
+  { href: '/kds', labelKey: 'kds', icon: ChefHat, permission: 'kitchen.use', businessTypes: ['restaurant'] },
   { href: '/customers', labelKey: 'customers', icon: Users, permission: 'customers.view', businessTypes: null },
   { href: '/staff', labelKey: 'staff', icon: UserCog, permission: 'staff.view', businessTypes: null },
   { href: '/settings', labelKey: 'settings', icon: Settings, permission: 'settings.view', businessTypes: null },
@@ -106,8 +106,8 @@ export default function AppSidebar() {
   const businessType = currentTenant?.business_type || 'restaurant';
   const navItems = ALL_NAV_ITEMS.filter((item) => {
     if (item.href === '/tables' && !tablesRequired) return false;
-    // Hide KDS settings navigation when KDS is disabled.
-    if (item.href === '/settings?tab=kds' && !kdsEnabled) return false;
+    // Hide KDS navigation when KDS is disabled.
+    if (item.href === '/kds' && !kdsEnabled) return false;
     // WhatsApp integration not enabled on this tenant → hide the nav entry.
     if (item.href === '/whatsapp' && !whatsappEnabled) return false;
     const permitted = item.href === '/staff'

@@ -71,6 +71,19 @@ body {
   font-family: var(--font-sans);
 }
 
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 /* Custom +/- controls exist next to numeric fields throughout the POS UI;
  * the native spinner is redundant and its narrow hit target invites mis-taps. */
 input[type="number"]::-webkit-inner-spin-button,
