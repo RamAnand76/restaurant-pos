@@ -3,9 +3,20 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
 import {
-  ShoppingCart, UtensilsCrossed, Package, Truck, Globe,
-  Plus, Minus, Trash2, Pause, MapPin, SquarePen,
-  Users, Wallet, StickyNote,
+  ShoppingCart,
+  UtensilsCrossed,
+  Package,
+  Truck,
+  Globe,
+  Plus,
+  Minus,
+  Trash2,
+  Pause,
+  MapPin,
+  SquarePen,
+  Users,
+  Wallet,
+  StickyNote,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import api from '@/lib/api';
@@ -29,6 +40,7 @@ interface Props {
   currency: string;
   submitting: boolean;
   onPlaceOrder: () => void;
+  onQuickPay?: (method: 'cash' | 'upi') => void;
   onShowTablePicker: () => void;
   onEditItem?: (item: CartItem) => void;
   variant?: 'sidebar' | 'drawer';
@@ -90,7 +102,9 @@ function ItemQuantityControl({
         >
           <Minus size={16} />
         </button>
-        <span className="w-6 text-center text-base font-semibold tabular-nums">{item.quantity}</span>
+        <span className="w-6 text-center text-base font-semibold tabular-nums">
+          {item.quantity}
+        </span>
         <button
           onClick={() => stepBy(1)}
           className="touch-target rounded-full bg-muted transition-colors hover:bg-muted/70 active:bg-muted/70"
@@ -136,7 +150,15 @@ function ItemQuantityControl({
   );
 }
 
-export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem, variant = 'sidebar', existingOrder }: Props) {
+export default function CartPanel({
+  tables,
+  submitting,
+  onPlaceOrder,
+  onQuickPay,
+  onEditItem,
+  variant = 'sidebar',
+  existingOrder,
+}: Props) {
   const cart = useCartStore();
   const heldOrders = useHeldOrdersStore();
   const { currentTenant } = useAuthStore();
@@ -147,13 +169,19 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
   const tSettings = useTranslations('settings');
   const isRestaurant = (currentTenant?.business_type ?? 'restaurant') === 'restaurant';
   const fmt = useFormatCurrency();
-  const canHold = isRestaurant && cart.orderType === 'dine_in' && cart.tableId && cart.items.length > 0 && billingType === 'postpaid';
+  const canHold =
+    isRestaurant &&
+    cart.orderType === 'dine_in' &&
+    cart.tableId &&
+    cart.items.length > 0 &&
+    billingType === 'postpaid';
 
   const isDeliveryOrder = cart.orderType === 'delivery';
   const [customPaymentMethods, setCustomPaymentMethods] = useState<CustomPaymentMethod[]>([]);
   useEffect(() => {
     if (!isDeliveryOrder) return;
-    api.get('/payment-methods')
+    api
+      .get('/payment-methods')
       .then((res) => setCustomPaymentMethods(res.data.payment_methods || []))
       .catch(() => setCustomPaymentMethods([]));
   }, [isDeliveryOrder]);
@@ -221,7 +249,8 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
         isDrawer
           ? 'flex flex-col w-full'
           : 'pos-cart-shell w-full h-full bg-card rounded-xl border border-border dark:border-border flex flex-col shadow-sm'
-      }>
+      }
+    >
       {/* Order Type */}
       <div className="p-4 border-b border-border dark:border-border space-y-2">
         <div className="flex gap-1 bg-muted rounded-lg p-1">
@@ -230,7 +259,14 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
             .map((type) => {
               const Icon = orderTypeIcons[type];
               const showIcon = type !== 'dine_in' && type !== 'online';
-              const label = type === 'dine_in' ? t('orderTypeDineIn') : type === 'takeaway' ? t('orderTypeTakeaway') : type === 'delivery' ? t('orderTypeDelivery') : t('orderTypeOnline');
+              const label =
+                type === 'dine_in'
+                  ? t('orderTypeDineIn')
+                  : type === 'takeaway'
+                    ? t('orderTypeTakeaway')
+                    : type === 'delivery'
+                      ? t('orderTypeDelivery')
+                      : t('orderTypeOnline');
               return (
                 <button
                   key={type}
@@ -241,7 +277,12 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
-                  {showIcon && <Icon size={13} className={cart.orderType === type ? 'text-primary' : 'text-muted-foreground'} />}
+                  {showIcon && (
+                    <Icon
+                      size={13}
+                      className={cart.orderType === type ? 'text-primary' : 'text-muted-foreground'}
+                    />
+                  )}
                   {label}
                 </button>
               );
@@ -250,11 +291,39 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
 
         {cart.orderType === 'dine_in' && (
           <div className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground"><Users size={15} /><span>{t('pax')}</span></div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Users size={15} />
+              <span>{t('pax')}</span>
+            </div>
             <div className="flex items-center gap-2">
-              <button type="button" aria-label={t('decreasePax')} onClick={() => cart.setGuestCount(Math.max(1, cart.guestCount - 1))} className="touch-target rounded-full bg-muted"><Minus size={15} /></button>
-              <input aria-label={t('pax')} inputMode="numeric" type="number" min="1" max="99" value={cart.guestCount} onChange={(e) => cart.setGuestCount(Math.min(99, Math.max(1, Number(e.target.value) || 1)))} className="w-12 text-center text-base font-semibold border-0 outline-none bg-transparent" />
-              <button type="button" aria-label={t('increasePax')} onClick={() => cart.setGuestCount(Math.min(99, cart.guestCount + 1))} className="touch-target rounded-full bg-muted"><Plus size={15} /></button>
+              <button
+                type="button"
+                aria-label={t('decreasePax')}
+                onClick={() => cart.setGuestCount(Math.max(1, cart.guestCount - 1))}
+                className="touch-target rounded-full bg-muted"
+              >
+                <Minus size={15} />
+              </button>
+              <input
+                aria-label={t('pax')}
+                inputMode="numeric"
+                type="number"
+                min="1"
+                max="99"
+                value={cart.guestCount}
+                onChange={(e) =>
+                  cart.setGuestCount(Math.min(99, Math.max(1, Number(e.target.value) || 1)))
+                }
+                className="w-12 text-center text-base font-semibold border-0 outline-none bg-transparent"
+              />
+              <button
+                type="button"
+                aria-label={t('increasePax')}
+                onClick={() => cart.setGuestCount(Math.min(99, cart.guestCount + 1))}
+                className="touch-target rounded-full bg-muted"
+              >
+                <Plus size={15} />
+              </button>
             </div>
           </div>
         )}
@@ -280,9 +349,11 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
               <Wallet size={14} className="text-muted-foreground shrink-0" />
               <span className="text-sm text-muted-foreground">{t('expectedPayment')}</span>
               <select
-                value={cart.expectedPaymentMethodId !== null
-                  ? `custom:${cart.expectedPaymentMethodId}`
-                  : cart.expectedPaymentMethod}
+                value={
+                  cart.expectedPaymentMethodId !== null
+                    ? `custom:${cart.expectedPaymentMethodId}`
+                    : cart.expectedPaymentMethod
+                }
                 onChange={(e) => {
                   const selected = e.target.value;
                   // A configured method travels by identity, so a method named
@@ -291,7 +362,9 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
                     ? Number(selected.slice('custom:'.length))
                     : null;
                   if (customId !== null) {
-                    const method = customPaymentMethods.find((candidate) => candidate.id === customId);
+                    const method = customPaymentMethods.find(
+                      (candidate) => candidate.id === customId,
+                    );
                     if (method) {
                       cart.setExpectedPaymentMethod(method.name, method.id);
                       return;
@@ -309,14 +382,20 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
                 {customPaymentMethods.length > 0 && (
                   <optgroup label={tSettings('paymentMethods')}>
                     {customPaymentMethods.map((method) => (
-                      <option key={method.id} value={`custom:${method.id}`}>{method.name}</option>
+                      <option key={method.id} value={`custom:${method.id}`}>
+                        {method.name}
+                      </option>
                     ))}
                   </optgroup>
                 )}
-                {cart.expectedPaymentMethodId !== null
-                  && !customPaymentMethods.some((method) => method.id === cart.expectedPaymentMethodId) && (
-                  <option value={`custom:${cart.expectedPaymentMethodId}`}>{cart.expectedPaymentMethod || tCommon('unknown')}</option>
-                )}
+                {cart.expectedPaymentMethodId !== null &&
+                  !customPaymentMethods.some(
+                    (method) => method.id === cart.expectedPaymentMethodId,
+                  ) && (
+                    <option value={`custom:${cart.expectedPaymentMethodId}`}>
+                      {cart.expectedPaymentMethod || tCommon('unknown')}
+                    </option>
+                  )}
               </select>
             </label>
             <div className="flex items-center gap-2">
@@ -360,31 +439,53 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
       {/* Cart Items */}
       {/* min-h-0 overrides the content-based automatic minimum size, so a long
           cart scrolls its rows instead of pushing the totals and checkout out. */}
-      <div data-testid="cart-items-scroll" className={isDrawer ? 'overflow-y-auto p-4 max-h-[40vh]' : 'pos-cart-items flex-1 min-h-0 overflow-y-auto p-4'}>
+      <div
+        data-testid="cart-items-scroll"
+        className={
+          isDrawer
+            ? 'overflow-y-auto p-4 max-h-[40vh]'
+            : 'pos-cart-items flex-1 min-h-0 overflow-y-auto p-4'
+        }
+      >
         {/* Previously ordered items (add-items mode) */}
-        {existingOrder && existingOrder.items && existingOrder.items.filter((i: OrderItem) => i.status !== 'cancelled').length > 0 && (
-          <div className="mb-3 pb-3 border-b border-dashed border-border">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t('alreadyOrdered')}</p>
-            <div className="space-y-1.5">
-              {existingOrder.items.filter((i: OrderItem) => i.status !== 'cancelled').map((item: OrderItem) => (
-                <div key={item.id} className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">{item.quantity}× {item.product_name}</span>
-                  <span className="text-xs text-muted-foreground">{fmt(Number(item.total))}</span>
-                </div>
-              ))}
+        {existingOrder &&
+          existingOrder.items &&
+          existingOrder.items.filter((i: OrderItem) => i.status !== 'cancelled').length > 0 && (
+            <div className="mb-3 pb-3 border-b border-dashed border-border">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                {t('alreadyOrdered')}
+              </p>
+              <div className="space-y-1.5">
+                {existingOrder.items
+                  .filter((i: OrderItem) => i.status !== 'cancelled')
+                  .map((item: OrderItem) => (
+                    <div key={item.id} className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">
+                        {item.quantity}× {item.product_name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {fmt(Number(item.total))}
+                      </span>
+                    </div>
+                  ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {cart.items.length === 0 ? (
-          <div className={`flex flex-col items-center justify-center text-muted-foreground ${existingOrder ? 'py-4' : isDrawer ? 'py-8' : 'h-full'}`}>
+          <div
+            className={`flex flex-col items-center justify-center text-muted-foreground ${existingOrder ? 'py-4' : isDrawer ? 'py-8' : 'h-full'}`}
+          >
             <ShoppingCart size={existingOrder ? 24 : 40} />
             <p className="mt-2 text-sm">{existingOrder ? t('addNewItemsAbove') : t('cartEmpty')}</p>
           </div>
         ) : (
           <div className="space-y-3">
             {cart.items.map((item) => (
-              <div key={item.id} className="border-b border-border/60 pb-3 last:border-b-0 last:pb-0">
+              <div
+                key={item.id}
+                className="border-b border-border/60 pb-3 last:border-b-0 last:pb-0"
+              >
                 <div className="flex items-start gap-2">
                   <p className="min-w-0 flex-1 break-words text-sm font-medium leading-snug text-foreground">
                     {item.variant
@@ -404,18 +505,27 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
                     <div className="mt-0.5">
                       {item.addons.map((a) => (
                         <p key={a.id} className="break-words text-xs text-muted-foreground">
-                          + {a.name}{(a.quantity || 1) > 1 ? ` ×${a.quantity}` : ''} {Number(a.price) > 0 && `(${fmt(Number(a.price) * (a.quantity || 1))})`}
+                          + {a.name}
+                          {(a.quantity || 1) > 1 ? ` ×${a.quantity}` : ''}{' '}
+                          {Number(a.price) > 0 && `(${fmt(Number(a.price) * (a.quantity || 1))})`}
                         </p>
                       ))}
                     </div>
                   )}
                   {item.special_instructions && (
-                    <p className="text-xs text-muted-foreground italic mt-0.5 break-words">{item.special_instructions}</p>
+                    <p className="text-xs text-muted-foreground italic mt-0.5 break-words">
+                      {item.special_instructions}
+                    </p>
                   )}
                 </div>
                 <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm text-muted-foreground">
-                    {fmt(cartVariantUnitPrice(item, cart.orderType === 'online' && cart.onlinePlatform.trim().length > 0))}
+                    {fmt(
+                      cartVariantUnitPrice(
+                        item,
+                        cart.orderType === 'online' && cart.onlinePlatform.trim().length > 0,
+                      ),
+                    )}
                   </p>
                   <div className="flex items-center gap-1.5">
                     {onEditItem && (
@@ -438,7 +548,10 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
 
       {/* Cart Footer */}
       {/* Cart Footer */}
-      <div data-testid="cart-footer" className="p-4 border-t border-border/80 bg-card/60 backdrop-blur-sm">
+      <div
+        data-testid="cart-footer"
+        className="p-4 border-t border-border/80 bg-card/60 backdrop-blur-sm"
+      >
         {/* Order Notes */}
         {cart.items.length > 0 && (
           <div className="mb-3">
@@ -450,15 +563,21 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
               maxLength={200}
               className="w-full min-h-16 px-3 py-2 text-xs border border-border bg-card rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand"
             />
-            <p className="text-[11px] text-muted-foreground text-end mt-0.5 font-mono">{cart.orderNotes.length}/200</p>
+            <p className="text-[11px] text-muted-foreground text-end mt-0.5 font-mono">
+              {cart.orderNotes.length}/200
+            </p>
           </div>
         )}
 
         {/* Bill Hierarchy & Stripe Breakdown */}
         <div className="space-y-2 mb-3.5">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-muted-foreground font-medium uppercase tracking-wider text-[11px]">{t('items')}</span>
-            <span className="font-semibold text-foreground tabular-nums font-mono">{cart.itemCount()}</span>
+            <span className="text-muted-foreground font-medium uppercase tracking-wider text-[11px]">
+              {t('items')}
+            </span>
+            <span className="font-semibold text-foreground tabular-nums font-mono">
+              {cart.itemCount()}
+            </span>
           </div>
 
           <div className="flex justify-between items-baseline text-sm">
@@ -469,17 +588,32 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
           </div>
 
           {(appliedCharges.length > 0 || addableCharges.length > 0) && (
-            <div className="rounded-lg border border-border/60 bg-muted/20 p-2.5 space-y-1.5 my-2" data-testid="cart-charges">
+            <div
+              className="rounded-lg border border-border/60 bg-muted/20 p-2.5 space-y-1.5 my-2"
+              data-testid="cart-charges"
+            >
               {appliedCharges.map((charge) => {
                 const definition = applicableCharges.find((c) => c.id === charge.id);
                 const isOptional = definition?.is_optional ?? false;
                 return (
                   <div key={charge.id} className="flex items-center justify-between gap-2 text-xs">
-                    <span className={charge.waived ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground'}>
+                    <span
+                      className={
+                        charge.waived
+                          ? 'text-muted-foreground/60 line-through'
+                          : 'text-muted-foreground'
+                      }
+                    >
                       {charge.name}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <span className={charge.waived ? 'text-muted-foreground/60 line-through tabular-nums font-mono' : 'font-medium text-foreground tabular-nums font-mono'}>
+                      <span
+                        className={
+                          charge.waived
+                            ? 'text-muted-foreground/60 line-through tabular-nums font-mono'
+                            : 'font-medium text-foreground tabular-nums font-mono'
+                        }
+                      >
                         {fmt(charge.amount)}
                       </span>
                       {isOptional && (
@@ -499,7 +633,9 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
                           aria-pressed={!cart.optedInChargeIds.has(charge.id)}
                           className="text-[10px] px-2 py-0.5 rounded-full border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
                         >
-                          {cart.optedInChargeIds.has(charge.id) ? t('removeCharge') : t('addCharge')}
+                          {cart.optedInChargeIds.has(charge.id)
+                            ? t('removeCharge')
+                            : t('addCharge')}
                         </button>
                       )}
                     </div>
@@ -529,12 +665,36 @@ export default function CartPanel({ tables, submitting, onPlaceOrder, onEditItem
 
           {/* Grand Total Row */}
           <div className="flex justify-between items-baseline pt-2 border-t border-border/80">
-            <span className="text-sm font-semibold tracking-tight text-foreground uppercase">{t('total') || 'Total'}</span>
+            <span className="text-sm font-semibold tracking-tight text-foreground uppercase">
+              {t('total') || 'Total'}
+            </span>
             <span className="text-xl font-bold tracking-tight text-brand tabular-nums font-mono">
               {fmt(cart.subtotal() + chargeTotal)}
             </span>
           </div>
         </div>
+
+        {onQuickPay && !canHold && (
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              type="button"
+              disabled={submitting || cart.items.length === 0}
+              onClick={() => onQuickPay('cash')}
+              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xs transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+            >
+              <Wallet size={14} />
+              <span>Exact Cash</span>
+            </button>
+            <button
+              type="button"
+              disabled={submitting || cart.items.length === 0}
+              onClick={() => onQuickPay('upi')}
+              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white shadow-xs transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+            >
+              <span>📱 GPay / UPI</span>
+            </button>
+          </div>
+        )}
 
         <div className="flex gap-2">
           {canHold && (
