@@ -139,7 +139,7 @@ const PRINT_LABELS: Record<PrintLabelLanguage, PrintLabelTable> = {
     'pos.orderTypeDineIn': "Dine in",
     'pos.orderTypeDelivery': "Delivery",
     'pos.orderTypeOnline': "Online",
-    'pos.orderTypeTakeaway': "Takeaway",
+    'pos.orderTypeTakeaway': "Parcel",
     'pos.methodCash': "Cash",
     'pos.methodCard': "Card",
     'pos.methodWallet': "Wallet",

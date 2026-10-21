@@ -51,7 +51,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <AuthGuard>
-      <SidebarProvider defaultOpen className="flex h-screen min-h-0 flex-col w-full" style={{ minHeight: 0 }}>
+      <SidebarProvider
+        defaultOpen
+        className="flex h-screen min-h-0 flex-col w-full"
+        style={{ minHeight: 0 }}
+      >
         <TitleBar />
         <div className="flex min-h-0 flex-1 w-full overflow-hidden">
           <AppSidebar />
@@ -59,8 +63,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Consistent top header with permanent collapse trigger & offline/online indicators */}
             <div className="flex items-center justify-between px-4 py-2 border-b border-border/80 bg-card/60 backdrop-blur-md shrink-0">
               <div className="flex items-center gap-2">
-                <SidebarTrigger className="size-8 text-muted-foreground hover:text-foreground cursor-pointer" aria-label="Toggle navigation" />
-                <span className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase font-mono">FloPOS Terminal</span>
+                <SidebarTrigger
+                  className="size-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                  aria-label="Toggle navigation"
+                />
+                <img src="/tavroq-logo.png" alt="TAVROQ" className="size-5 object-contain" />
+                <span className="text-xs font-bold text-foreground tracking-tight">TAVROQ</span>
+                <span className="text-xs text-muted-foreground/40 font-light">/</span>
+                <span className="text-xs font-medium text-muted-foreground">Terminal</span>
               </div>
               <div className="flex items-center gap-2">
                 {isOffline ? (
@@ -77,12 +87,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             </div>
             {!isPos && <GlobalNotifications />}
-            <div className={isPos
-              ? 'flex-1 min-h-0 flex flex-col overflow-hidden p-4'
-              : isSettings
-              ? 'flex-1 min-h-0 p-4 overflow-auto md:overflow-hidden min-w-0'
-              : 'flex-1 p-4 overflow-auto min-w-0'
-            }>
+            <div
+              className={
+                isPos
+                  ? 'flex-1 min-h-0 flex flex-col overflow-hidden p-4'
+                  : isSettings
+                    ? 'flex-1 min-h-0 p-4 overflow-auto md:overflow-hidden min-w-0'
+                    : 'flex-1 p-4 overflow-auto min-w-0'
+              }
+            >
               {children}
             </div>
             <StatusBar showUpdateBadge={false} />

@@ -26,7 +26,21 @@ interface Props {
   onToggleFullscreen: () => void;
 }
 
-export default function PosTopbar({ tables, products, onTopItemSelect, onShowTablePicker, onShowCashMovement, onShowShift, shiftHasOpenSession, shiftLoading, shiftError, canUseShift, onShowPrintMenu, fullscreen, onToggleFullscreen }: Props) {
+export default function PosTopbar({
+  tables,
+  products,
+  onTopItemSelect,
+  onShowTablePicker,
+  onShowCashMovement,
+  onShowShift,
+  shiftHasOpenSession,
+  shiftLoading,
+  shiftError,
+  canUseShift,
+  onShowPrintMenu,
+  fullscreen,
+  onToggleFullscreen,
+}: Props) {
   const cart = useCartStore();
   const { currentTenant } = useAuthStore();
   const tablesRequired = usePosSettingsStore((s) => s.tablesRequired);
@@ -50,15 +64,20 @@ export default function PosTopbar({ tables, products, onTopItemSelect, onShowTab
         {showTableBtn && (
           <button
             onClick={onShowTablePicker}
-            className={`touch-target shrink-0 gap-1.5 px-3 py-1 text-xs rounded-md border font-semibold transition-all whitespace-nowrap ${
+            className={`h-9 shrink-0 inline-flex items-center gap-1.5 px-3 text-xs rounded-lg border font-semibold transition-all whitespace-nowrap cursor-pointer ${
               cart.tableId
-                ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                ? 'bg-primary text-primary-foreground border-primary shadow-2xs'
                 : 'bg-card border-border text-foreground hover:bg-muted/70'
             }`}
           >
-            <LayoutGrid size={13} className={cart.tableId ? 'text-primary-foreground' : 'text-muted-foreground'} />
+            <LayoutGrid
+              size={14}
+              className={cart.tableId ? 'text-primary-foreground' : 'text-muted-foreground'}
+            />
             {cart.tableId
-              ? t('tableLabel', { name: tables.find(t => t.id === cart.tableId)?.name || cart.tableId })
+              ? t('tableLabel', {
+                  name: tables.find((t) => t.id === cart.tableId)?.name || cart.tableId,
+                })
               : t('selectTable')}
           </button>
         )}
@@ -66,7 +85,7 @@ export default function PosTopbar({ tables, products, onTopItemSelect, onShowTab
         <button
           type="button"
           onClick={onShowCashMovement}
-          className="touch-target shrink-0 gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-all hover:text-foreground hover:bg-muted/70 whitespace-nowrap"
+          className="h-9 shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-xs font-medium text-muted-foreground transition-all hover:text-foreground hover:bg-muted/70 whitespace-nowrap cursor-pointer shadow-2xs"
           title={tDashboard('cashMovement')}
           aria-label={tDashboard('cashMovement')}
         >
@@ -79,35 +98,42 @@ export default function PosTopbar({ tables, products, onTopItemSelect, onShowTab
             type="button"
             onClick={onShowShift}
             disabled={shiftLoading}
-            className="touch-target shrink-0 gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted active:bg-muted whitespace-nowrap disabled:opacity-50"
-            title={shiftError ?? (shiftHasOpenSession ? tDashboard('closeShiftSession') : tDashboard('openShift'))}
-            aria-label={shiftHasOpenSession ? tDashboard('closeShiftSession') : tDashboard('openShift')}
+            className="h-9 shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/70 whitespace-nowrap disabled:opacity-50 cursor-pointer shadow-2xs"
+            title={
+              shiftError ??
+              (shiftHasOpenSession ? tDashboard('closeShiftSession') : tDashboard('openShift'))
+            }
+            aria-label={
+              shiftHasOpenSession ? tDashboard('closeShiftSession') : tDashboard('openShift')
+            }
           >
-            {shiftHasOpenSession ? <Lock size={16} /> : <LockOpen size={16} />}
-            <span className="hidden sm:inline">{shiftHasOpenSession ? tDashboard('closeShiftSession') : tDashboard('openShift')}</span>
+            {shiftHasOpenSession ? <Lock size={14} /> : <LockOpen size={14} />}
+            <span className="hidden sm:inline">
+              {shiftHasOpenSession ? tDashboard('closeShiftSession') : tDashboard('openShift')}
+            </span>
           </button>
         )}
 
-        <div className="shrink-0">
+        <div className="shrink-0 flex items-center">
           <PrinterStatus />
         </div>
         <button
           type="button"
           onClick={onShowPrintMenu}
-          className="touch-target shrink-0 rounded-lg border border-border bg-card px-3 text-muted-foreground transition-colors hover:bg-muted active:bg-muted"
+          className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground hover:bg-muted active:bg-muted cursor-pointer shadow-2xs"
           title={tProducts('printMenu')}
           aria-label={tProducts('printMenu')}
         >
-          <Printer size={16} />
+          <Printer size={15} />
         </button>
         <button
           type="button"
           onClick={onToggleFullscreen}
-          className="touch-target shrink-0 rounded-lg border border-border bg-card px-3 text-muted-foreground transition-colors hover:bg-muted active:bg-muted"
+          className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground hover:bg-muted active:bg-muted cursor-pointer shadow-2xs"
           title={fullscreen ? t('exitFullscreen') : t('enterFullscreen')}
           aria-label={fullscreen ? t('exitFullscreen') : t('enterFullscreen')}
         >
-          {fullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          {fullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
         </button>
       </div>
     </div>

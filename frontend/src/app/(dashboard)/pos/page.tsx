@@ -1443,12 +1443,11 @@ export default function POSPage() {
                           supportError.message,
                           diagnosticsMessage,
                         );
-                        toast(
-                          copied
-                            ? tSupport('askAiCopied', { provider: provider.label })
-                            : tSupport('askAiCopyFailed', { provider: provider.label }),
-                          { icon: copied ? '📋' : 'ℹ️' },
-                        );
+                        if (copied) {
+                          toast.success(tSupport('askAiCopied', { provider: provider.label }));
+                        } else {
+                          toast.error(tSupport('askAiCopyFailed', { provider: provider.label }));
+                        }
                       })();
                     }}
                   >
@@ -1522,7 +1521,7 @@ export default function POSPage() {
       <Drawer open={mobileCartOpen} onOpenChange={setMobileCartOpen}>
         <DrawerTrigger asChild>
           <button
-            className="touch-target fixed bottom-5 end-5 z-40 w-14 h-14 bg-brand text-white rounded-full shadow-lg hover:bg-brand-hover active:bg-brand-hover transition-colors md:hidden"
+            className="fixed bottom-5 end-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg hover:bg-brand-hover active:bg-brand-hover transition-colors md:!hidden touch-manipulation cursor-pointer"
             aria-label={t('cart')}
           >
             <ShoppingCart size={22} />
@@ -1534,7 +1533,7 @@ export default function POSPage() {
           </button>
         </DrawerTrigger>
         <DrawerContent className="max-h-[85vh]">
-          <div className="overflow-y-auto max-h-[80vh] px-2 pb-2">
+          <div className="overflow-y-auto max-h-[80vh] px-4 pb-4 w-full max-w-lg mx-auto">
             <CartPanel {...cartPanelProps} variant="drawer" />
           </div>
         </DrawerContent>

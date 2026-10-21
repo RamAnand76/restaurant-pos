@@ -59,9 +59,14 @@ const STATUS_CONFIG: Record<
 export default function PrinterStatus() {
   // Printer status and hardware configuration are synced at the dashboard layout level.
   const {
-    status, deviceInfo, lastError,
-    connect, disconnect, clearError,
-    printMethod, hardwarePrinter,
+    status,
+    deviceInfo,
+    lastError,
+    connect,
+    disconnect,
+    clearError,
+    printMethod,
+    hardwarePrinter,
   } = usePrinterStore();
   const t = useTranslations('pos');
   const router = useRouter();
@@ -102,16 +107,13 @@ export default function PrinterStatus() {
         <Button
           variant="outline"
           size="sm"
-          className={`h-10 flex items-center gap-1.5 ${cfg.color} border-current/30`}
+          className="h-9 rounded-lg flex items-center gap-1.5 px-3 text-xs font-medium border border-border bg-card hover:bg-muted text-foreground cursor-pointer shadow-2xs"
         >
-          <Icon
-            size={16}
-            className={isConnecting ? 'animate-spin' : undefined}
-          />
+          <Icon size={14} className={`${cfg.color} ${isConnecting ? 'animate-spin' : ''}`} />
           <span className="hidden sm:inline text-xs font-medium truncate max-w-[140px]">
             {hardwarePrinter ? hardwarePrinter.name : t(cfg.labelKey)}
           </span>
-          <ChevronDown size={12} className="text-gray-400" />
+          <ChevronDown size={12} className="text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
 
@@ -128,9 +130,18 @@ export default function PrinterStatus() {
             </p>
             <p className="capitalize">
               {hardwarePrinter.connection_type}
-              {hardwarePrinter.connection_type === 'network' && hardwarePrinter.ip_address
-                ? <> · <Ltr>{hardwarePrinter.ip_address}{hardwarePrinter.port ? ':' + hardwarePrinter.port : ''}</Ltr></>
-                : ''}
+              {hardwarePrinter.connection_type === 'network' && hardwarePrinter.ip_address ? (
+                <>
+                  {' '}
+                  ·{' '}
+                  <Ltr>
+                    {hardwarePrinter.ip_address}
+                    {hardwarePrinter.port ? ':' + hardwarePrinter.port : ''}
+                  </Ltr>
+                </>
+              ) : (
+                ''
+              )}
               {hardwarePrinter.paper_width ? ` · ${hardwarePrinter.paper_width}` : ''}
             </p>
           </div>
@@ -141,7 +152,12 @@ export default function PrinterStatus() {
             <p className="font-medium text-gray-700 truncate">
               {deviceInfo.productName ?? t('printerUnknownDevice')}
             </p>
-            <p><Ltr>{deviceInfo.manufacturerName ?? `VID:${deviceInfo.vendorId.toString(16).toUpperCase()}`}</Ltr></p>
+            <p>
+              <Ltr>
+                {deviceInfo.manufacturerName ??
+                  `VID:${deviceInfo.vendorId.toString(16).toUpperCase()}`}
+              </Ltr>
+            </p>
           </div>
         )}
 
@@ -172,16 +188,14 @@ export default function PrinterStatus() {
                 className="text-sm cursor-pointer text-red-600 focus:text-red-600"
               >
                 <Unplug size={14} className="me-2" />
-{t('printerDisconnect')}
+                {t('printerDisconnect')}
               </DropdownMenuItem>
             )}
           </>
         )}
 
         {printMethod === 'browser' && (
-          <div className="px-2 py-1.5 text-xs text-gray-500">
-            {t('printerBrowserMode')}
-          </div>
+          <div className="px-2 py-1.5 text-xs text-gray-500">{t('printerBrowserMode')}</div>
         )}
 
         <DropdownMenuSeparator />

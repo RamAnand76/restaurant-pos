@@ -477,7 +477,7 @@
     "disabledHint": "This business has turned off the Kitchen Display System. Ask an owner or manager to re-enable it from Settings.",
     "disabledHintDashboard": "This business has turned off the Kitchen Display System. An owner or manager can turn it back on from Settings.",
     "disabledTitle": "Kitchen Display is disabled",
-    "emptyAll": "No active orders 🎉",
+    "emptyAll": "No active orders",
     "emptyColumn": "—",
     "emptyHint": "Items will appear here when their status changes",
     "emptyItems": "No {status} items",

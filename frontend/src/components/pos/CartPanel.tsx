@@ -17,6 +17,7 @@ import {
   Users,
   Wallet,
   StickyNote,
+  QrCode,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import api from '@/lib/api';
@@ -252,13 +253,12 @@ export default function CartPanel({
       }
     >
       {/* Order Type */}
-      <div className="p-4 border-b border-border dark:border-border space-y-2">
-        <div className="flex gap-1 bg-muted rounded-lg p-1">
+      <div className="p-3 sm:p-4 border-b border-border space-y-2.5">
+        <div className="grid grid-cols-4 gap-1 bg-muted/60 dark:bg-muted/30 rounded-xl p-1 border border-border/50">
           {(['dine_in', 'takeaway', 'delivery', 'online'] as const)
             .filter((type) => isRestaurant || type !== 'dine_in')
             .map((type) => {
               const Icon = orderTypeIcons[type];
-              const showIcon = type !== 'dine_in' && type !== 'online';
               const label =
                 type === 'dine_in'
                   ? t('orderTypeDineIn')
@@ -267,23 +267,22 @@ export default function CartPanel({
                     : type === 'delivery'
                       ? t('orderTypeDelivery')
                       : t('orderTypeOnline');
+              const isSelected = cart.orderType === type;
               return (
                 <button
                   key={type}
                   onClick={() => cart.setOrderType(type)}
-                  className={`touch-target flex-1 gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold tracking-tight transition-all ${showIcon ? '' : 'whitespace-nowrap'} ${
-                    cart.orderType === type
-                      ? 'bg-card text-foreground shadow-sm border border-border/80'
+                  className={`flex items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[11px] font-semibold tracking-tight transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-card text-foreground shadow-xs border border-border/80'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
-                  {showIcon && (
-                    <Icon
-                      size={13}
-                      className={cart.orderType === type ? 'text-primary' : 'text-muted-foreground'}
-                    />
-                  )}
-                  {label}
+                  <Icon
+                    size={12}
+                    className={`shrink-0 ${isSelected ? 'text-primary' : 'text-muted-foreground/80'}`}
+                  />
+                  <span className="whitespace-nowrap">{label}</span>
                 </button>
               );
             })}
@@ -668,48 +667,60 @@ export default function CartPanel({
             <span className="text-sm font-semibold tracking-tight text-foreground uppercase">
               {t('total') || 'Total'}
             </span>
-            <span className="text-xl font-bold tracking-tight text-brand tabular-nums font-mono">
+            <span className="text-xl font-bold tracking-tight text-foreground tabular-nums font-mono">
               {fmt(cart.subtotal() + chargeTotal)}
             </span>
           </div>
         </div>
 
-        {onQuickPay && !canHold && (
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <button
-              type="button"
-              disabled={submitting || cart.items.length === 0}
-              onClick={() => onQuickPay('cash')}
-              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xs transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
-            >
-              <Wallet size={14} />
-              <span>Exact Cash</span>
-            </button>
-            <button
-              type="button"
-              disabled={submitting || cart.items.length === 0}
-              onClick={() => onQuickPay('upi')}
-              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white shadow-xs transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
-            >
-              <span>📱 GPay / UPI</span>
-            </button>
-          </div>
-        )}
-
-        <div className="flex gap-2">
-          {canHold && (
-            <Button variant="outline" onClick={handleHold} className="flex-1 rounded-xl">
-              <Pause size={14} className="me-1" /> {t('holdButton')}
-            </Button>
+        {/* Checkout Actions */}
+        <div className="pt-2.5 border-t border-border/80 space-y-2.5">
+          {onQuickPay && !canHold && (
+            <div className="space-y-1.5">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80 flex items-center justify-between">
+                <span>Quick Pay</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={submitting || cart.items.length === 0}
+                  onClick={() => onQuickPay('cash')}
+                  className="flex items-center justify-center gap-2 h-10 px-3 rounded-xl text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 active:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-2xs"
+                >
+                  <Wallet size={15} className="shrink-0" />
+                  <span>Exact Cash</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={submitting || cart.items.length === 0}
+                  onClick={() => onQuickPay('upi')}
+                  className="flex items-center justify-center gap-2 h-10 px-3 rounded-xl text-xs font-semibold border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 active:bg-sky-500/25 text-sky-600 dark:text-sky-400 transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-2xs"
+                >
+                  <QrCode size={15} className="shrink-0" />
+                  <span>GPay / UPI</span>
+                </button>
+              </div>
+            </div>
           )}
-          <Button
-            onClick={onPlaceOrder}
-            disabled={submitting || cart.items.length === 0}
-            className="flex-1 font-semibold tracking-tight shadow-sm hover:opacity-95 active:scale-[0.99] transition-all bg-primary text-primary-foreground rounded-xl"
-            size="lg"
-          >
-            {submitting ? t('placing') : t('placeOrderButton')}
-          </Button>
+
+          <div className="flex gap-2 pt-0.5">
+            {canHold && (
+              <Button
+                variant="outline"
+                onClick={handleHold}
+                className="flex-1 h-12 rounded-xl text-sm font-semibold border-border cursor-pointer hover:bg-muted"
+              >
+                <Pause size={15} className="me-1.5" /> {t('holdButton')}
+              </Button>
+            )}
+            <Button
+              onClick={onPlaceOrder}
+              disabled={submitting || cart.items.length === 0}
+              className="flex-1 h-12 rounded-xl text-sm font-bold tracking-tight shadow-sm hover:opacity-95 active:scale-[0.99] transition-all bg-primary text-primary-foreground cursor-pointer disabled:opacity-50"
+            >
+              {submitting ? t('placing') : t('placeOrderButton')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

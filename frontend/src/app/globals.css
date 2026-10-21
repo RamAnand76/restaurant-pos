@@ -106,6 +106,18 @@ input[type="number"] {
   touch-action: manipulation;
 }
 
+.touch-target.hidden,
+.hidden.touch-target {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .touch-target.md\:hidden,
+  .md\:hidden.touch-target {
+    display: none !important;
+  }
+}
+
 /* Short viewports: the cart column becomes the single scroll owner, so order
  * type, totals and checkout stay reachable however long the item list is. */
 @media (max-height: 560px) {
