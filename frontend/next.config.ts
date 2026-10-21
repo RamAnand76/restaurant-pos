@@ -1,15 +1,15 @@
-import type { NextConfig } from "next";
-import path from "node:path";
+import type { NextConfig } from 'next';
+import path from 'node:path';
 /**
  * NEXT_BUILD_MODE=desktop  →  static export for Electron (FloDesktop)
  * NEXT_BUILD_MODE unset    →  standard Next.js server mode (FloPOS cloud)
  */
-const isDesktop = process.env.NEXT_BUILD_MODE === "desktop";
+const isDesktop = process.env.NEXT_BUILD_MODE === 'desktop';
 
 const nextConfig: NextConfig = {
   // Static export: required for Electron — served via embedded Express,
   // not file:// so no CORS/routing issues.
-  output: isDesktop ? "export" : undefined,
+  output: isDesktop ? 'export' : undefined,
 
   // Trailing slashes make static paths predictable: /pos → /pos/index.html
   trailingSlash: isDesktop,
@@ -29,10 +29,11 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3001/api/:path*',
+        destination: `${backendUrl.replace(/\/+$/, '')}/api/:path*`,
       },
     ];
   },
